@@ -1,32 +1,21 @@
-# GitHub Repository Description (one-liner)
-> Smartphone accelerometer activity classifier (standing, walking, stairs) using rolling time-series features and GridSearchCV-tuned ML models — best accuracy 74.38% with Random Forest.
+# Human Activity Recognition from Raw Accelerometer Data
 
----
+Predicting human physical activity states (standing, walking, stairs up, stairs down) from tri-axial smartphone accelerometer time-series data using engineered data features, and supervised machine learning models.
 
-# README.md
+## Overview
 
-# Activity Recognition from Accelerometer Data
+Raw accelerometer signals (x, y, z) capture body motion over time but are noisy and not directly usable for classification. To make them useful, the signal is broken into small overlapping windows, and derived features are extracted from each window. These features are based on a short recent segment of data rather than a single timestamp, so the model can capture patterns like repeated movement during walking or low variation during standing.
 
-Classifies physical activities (standing, walking, stairs down, stairs up) from tri-axial smartphone accelerometer data using machine learning.
+hese features are fed into classification models (Logistic Regression, Decision Tree, Random Forest, XGBoost) where each model uses GridSearchCV to find the rolling window size and hyperparameters that result in the highest accuracy.
 
-## Problem
-Given raw x, y, z accelerometer readings from a smartphone, predict which of 4 activities the user is performing at each timestep.
-
-## Approach
-- Labels are provided every 10th observation and forward-filled across the full time series
-- Train/test split uses `shuffle=False` to preserve temporal order, with `test_size=0.3`
-- Rolling statistical and frequency domain features are computed **after** the split to prevent data leakage
+**Key steps:**
+- Labels from `train_labels.csv` are merged into `train_time_series.csv` and forward-filled to expand label coverage across all timesteps
+- Train/test split uses `shuffle=False` to preserve time order
+- Rolling statistical and frequency domain features are computed after the split to prevent data leakage
+- Four models compared: Logistic Regression, Decision Tree, Random Forest, XGBoost
 - `GridSearchCV` with `StratifiedKFold(n_splits=3)` is used for hyperparameter tuning on each model
 
-## Features
-Rolling window features computed per axis (x, y, z):
-- Statistical: mean, std, var, min, max, median, range, IQR
-- Motion: jerk (rate of change), jerk std, signal magnitude area (SMA)
-- Cross-axis: xy, xz, yz correlations
-- Frequency domain (FFT): dominant frequency, FFT energy, FFT mean
-- Magnitude: resultant vector mean and std
-
-## Models & Results
+## Output
 
 | Model | Best Accuracy | Best rolv | Best Params |
 |---|---|---|---|
@@ -35,22 +24,24 @@ Rolling window features computed per axis (x, y, z):
 | XGBoost | 0.7240 | 47 | `learning_rate=0.1, max_depth=3, n_estimators=200` |
 | **Random Forest** | **0.7438** | **34** | `max_depth=None, min_samples_split=4, n_estimators=50` |
 
-## Key Design Decisions
-- `shuffle=False` preserves time order so rolling features remain meaningful
-- Rolling applied separately on train and test to avoid data leakage
-- `StratifiedKFold` inside GridSearchCV ensures all 4 classes appear in every CV fold
-- FFT features added to capture rhythmic movement patterns across activities
+## Requirements
+Open in prompt and run:
+```bash
+pip install pandas numpy matplotlib scikit-learn xgboost
+```
 
-## Stack
-Python, scikit-learn, XGBoost, pandas, numpy, matplotlib
+## Data
 
----
+Download the following files and place them in the same directory as the notebook before running:
+- `train_labels.csv`
+- `train_time_series.csv`
+- `test_labels.csv`
+- `test_time_series.csv`
 
-# CV Entry
+## How to Run
 
-**Activity Recognition from Smartphone Accelerometer Data** | Python, scikit-learn, XGBoost
-- Built a 4-class activity classifier (standing, walking, stairs down, stairs up) from raw tri-axial accelerometer time-series data
-- Engineered 40+ rolling features including statistical, jerk, cross-axis correlation, and FFT frequency-domain features
-- Implemented leak-free pipeline by applying rolling windows after train/test split to preserve temporal integrity
-- Tuned Logistic Regression, Decision Tree, Random Forest, and XGBoost using GridSearchCV with StratifiedKFold cross-validation
-- Achieved best test accuracy of **74.38%** with Random Forest (rolv=34, n_estimators=50, min_samples_split=4)
+1. Download the notebook and the CSV files above
+2. Install dependencies (see Requirements)
+3. Open `HARprediction.ipynb` and run all cells top to bottom
+
+
