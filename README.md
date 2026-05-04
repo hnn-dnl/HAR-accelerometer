@@ -6,7 +6,7 @@ Predicting human physical activity states (standing, walking, stairs up, stairs 
 
 Raw accelerometer signals (x, y, z) capture body motion over time but are noisy and not directly usable for classification. To make them useful, the signal is broken into small overlapping windows, and derived features are extracted from each window. These features are based on a short recent segment of data rather than a single timestamp, so the model can capture patterns like repeated movement during walking or low variation during standing.
 
-hese features are fed into classification models (Logistic Regression, Decision Tree, Random Forest, XGBoost) where each model uses GridSearchCV to find the rolling window size and hyperparameters that result in the highest accuracy.
+These features are fed into classification models (Logistic Regression, Decision Tree, Random Forest, XGBoost) where each model uses GridSearchCV to find the rolling window size and hyperparameters that result in the highest accuracy.
 
 **Key steps:**
 - Labels from `train_labels.csv` are merged into `train_time_series.csv` and forward-filled to expand label coverage across all timesteps
@@ -19,10 +19,10 @@ hese features are fed into classification models (Logistic Regression, Decision 
 
 | Model | Best Accuracy | Best rolv | Best Params |
 |---|---|---|---|
-| Logistic Regression | 0.6537 | 40 | `C=40, max_iter=400` |
-| Decision Tree | 0.7017 | 37 | `max_depth=None, min_samples_split=2` |
-| XGBoost | 0.7240 | 47 | `learning_rate=0.1, max_depth=3, n_estimators=200` |
-| **Random Forest** | **0.7438** | **34** | `max_depth=None, min_samples_split=4, n_estimators=50` |
+| Logistic Regression | 0.656908 | 30 | `C=50, max_iter=300` |
+| Decision Tree | 0.733580 | 42 | `max_depth=10, min_samples_split=2` |
+| **Random Forest** | **0.760849** | **40** | `max_depth=None, min_samples_split=3, n_estimators=150` |
+| XGBoost | 0.711111 | 43 | `learning_rate=0.1, max_depth=6, n_estimators=300` |
 
 ## Requirements
 Open in prompt and run:
